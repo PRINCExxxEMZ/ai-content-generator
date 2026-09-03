@@ -71,14 +71,14 @@ Instructions:
       content: response.text,
     });
 
-  } catch (error) {
-    console.error("Gemini Error:", error);
+} catch (error) {
+  console.error("Gemini Error:", error);
 
-    res.status(500).json({
-      message: "Failed to generate content.",
-      error: error.message,
-    });
-  }
+  return res.status(500).json({
+    message: "Failed to generate content.",
+    error: error.message || String(error),
+  });
+}
 });
 
 
