@@ -36,9 +36,10 @@ function App() {
 
     const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(data.message || "Failed to generate content.");
-    }
+  if (!response.ok) {
+  console.error("Backend Error:", data);
+  throw new Error(data.error || data.message || "Failed to generate content.");
+}
 
     setGeneratedContent(data.content);
   } catch (error) {
