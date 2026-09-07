@@ -116,8 +116,10 @@ function App() {
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-black"
               >
                 <option className="bg-black text-white">LinkedIn</option>
+                <option className="bg-black text-white">Facebook</option>
                 <option className="bg-black text-white">Instagram</option>
                 <option className="bg-black text-white">X / Twitter</option>
+                <option className="bg-black text-white">Thread</option>
                 <option className="bg-black text-white">Blog</option>
               </select>
             </div>
@@ -233,5 +235,6 @@ function App() {
     </div>
   );
 }
+
 
 export default App;
