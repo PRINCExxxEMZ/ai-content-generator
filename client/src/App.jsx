@@ -6,6 +6,7 @@ function App() {
   const [platform, setPlatform] = useState("LinkedIn");
   const [topic, setTopic] = useState("");
   const [tone, setTone] = useState("Professional");
+  const [contentLength, setContentLength] = useState("Medium");
 
   // Output states
   const [generatedContent, setGeneratedContent] = useState("");
@@ -22,17 +23,21 @@ function App() {
   setGeneratedContent("");
 
   try {
-    const response = await fetch("https://ai-content-generator-api.onrender.com/api/generate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        platform,
-        topic,
-        tone,
-      }),
-    });
+        const response = await fetch(
+          "https://ai-content-generator-api.onrender.com/api/generate",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              platform,
+              topic,
+              tone,
+              contentLength,
+            }),
+          }
+        );
 
     const data = await response.json();
 
@@ -155,6 +160,23 @@ function App() {
                 <option className="bg-black text-white">Casual</option>
                 <option className="bg-black text-white">Persuasive</option>
                 <option className="bg-black text-white">Inspirational</option>
+              </select>
+            </div>
+
+            {/* Content Length  */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Content Length
+              </label>
+
+              <select
+                value={contentLength}
+                onChange={(e) => setContentLength(e.target.value)}
+                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none focus:border-black"
+              >
+                <option value="Short">Short</option>
+                <option value="Medium">Medium</option>
+                <option value="Long">Long</option>
               </select>
             </div>
 
