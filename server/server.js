@@ -37,7 +37,7 @@ app.post("/api/generate", async (req, res) => {
       contentLength,
     } = req.body;
 
-    // Validate input
+    // Validate request
     if (!platform || !topic || !tone || !contentLength) {
       return res.status(400).json({
         message:
@@ -48,35 +48,28 @@ app.post("/api/generate", async (req, res) => {
     const prompt = `
 You are an expert social media content writer.
 
-Create high-quality content for the following platform.
+Create content for:
 
-Platform:
-${platform}
-
-Topic:
-${topic}
-
-Tone:
-${tone}
-
-Content Length:
-${contentLength}
+Platform: ${platform}
+Topic: ${topic}
+Tone: ${tone}
+Content Length: ${contentLength}
 
 PLATFORM GUIDELINES:
 
 LinkedIn:
-- Use a professional but human tone.
+- Professional but human.
 - Start with a strong hook.
-- Use short, readable paragraphs.
-- Provide useful insights or practical value.
+- Use short readable paragraphs.
+- Provide useful insights.
 - Encourage discussion where appropriate.
 
 Instagram:
 - Create an engaging caption.
 - Start with an attention-grabbing hook.
 - Use short paragraphs.
-- Use emojis sparingly when appropriate.
-- Add relevant hashtags when useful.
+- Use emojis sparingly.
+- Add relevant hashtags when appropriate.
 
 X/Twitter:
 - Be concise and sharp.
@@ -106,29 +99,29 @@ Blog:
 - Include examples where useful.
 - End with a useful conclusion or call to action.
 
-CONTENT LENGTH GUIDELINES:
+CONTENT LENGTH:
 
 Short:
-Keep the content concise and punchy. Focus on the most important idea.
+Keep the content concise and punchy.
 
 Medium:
-Provide a balanced amount of detail while keeping the content easy to read.
+Provide a balanced amount of detail while remaining easy to read.
 
 Long:
-Provide detailed and comprehensive content with deeper explanations and examples where appropriate.
+Provide detailed and comprehensive content with deeper explanations and examples.
 
 GENERAL RULES:
 
 - Write original content specifically for the selected platform.
-- Make the content natural, authentic, conversational, and human-sounding.
-- Provide genuine value rather than generic statements.
-- Avoid clichés, repetition, filler, and unnecessary jargon.
-- Do not invent statistics, quotes, studies, or facts.
-- Use emojis only when they naturally fit the platform and tone.
-- Use relevant hashtags only when appropriate.
-- Do not mention AI or the content-generation process.
+- Make it natural, authentic and human-sounding.
+- Provide genuine value.
+- Avoid clichés, repetition and filler.
+- Do not invent statistics, quotes or studies.
+- Use emojis only when appropriate.
+- Use hashtags only when appropriate.
+- Do not mention AI.
 - Do not explain your reasoning.
-- Return ONLY the final content ready to copy and publish.
+- Return ONLY the final content.
 `;
 
     console.log("Generating content...");
@@ -146,23 +139,41 @@ GENERAL RULES:
 
     console.log("Gemini response received.");
 
-    // Safely extract generated text
-    const content = response?.candidates?.[0]?.content?.parts
-      ?.map((part) => part.text || "")
+    // Safely extract the generated text
+    const parts = response?.candidates?.[0]?.content?.parts;
+
+    if (!parts || !Array.isArray(parts)) {
+      console.error(
+        "Unexpected Gemini response:",
+        JSON.stringify(response, null, 2)
+      );
+
+      return res.status(500).json({
+        message: "Gemini returned an unexpected response.",
+      });
+    }
+
+    const content = parts
+      .filter((part) => part.text)
+      .map((part) => part.text)
       .join("")
       .trim();
 
     if (!content) {
-      console.error("No generated content:", response);
+      console.error(
+        "Gemini returned no text:",
+        JSON.stringify(response, null, 2)
+      );
 
       return res.status(500).json({
-        message: "Gemini did not return any content.",
+        message: "Gemini did not return any text.",
       });
     }
 
     res.json({
       content,
     });
+
   } catch (error) {
     console.error("Gemini Error:", error);
 
