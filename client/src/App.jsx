@@ -13,7 +13,7 @@ function App() {
   const [loading, setLoading] = useState(false);
 
   // Generate content
-  const handleGenerate = async () => {
+const handleGenerate = async () => {
   if (!topic.trim()) {
     alert("Please enter a topic.");
     return;
@@ -23,33 +23,41 @@ function App() {
   setGeneratedContent("");
 
   try {
-        const response = await fetch(
-          "https://ai-content-generator-api.onrender.com/api/generate",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              platform,
-              topic,
-              tone,
-              contentLength,
-            }),
-          }
-        );
+    const response = await fetch(
+      "https://ai-content-generator-api.onrender.com/api/generate",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          platform,
+          topic,
+          tone,
+          contentLength,
+        }),
+      }
+    );
 
     const data = await response.json();
 
-  if (!response.ok) {
-  console.error("Backend Error:", data);
-  throw new Error(data.error || data.message || "Failed to generate content.");
-}
+    if (!response.ok) {
+      console.error("Backend Error:", data);
+
+      throw new Error(
+        data.error ||
+        data.message ||
+        "Failed to generate content."
+      );
+    }
 
     setGeneratedContent(data.content);
   } catch (error) {
     console.error("API Error:", error);
-    setGeneratedContent(error.message);
+
+    setGeneratedContent(
+      "Something went wrong. Please try again."
+    );
   } finally {
     setLoading(false);
   }
@@ -164,7 +172,7 @@ function App() {
             </div>
 
             {/* Content Length  */}
-            <div>
+            <div className="mt-5">
               <label className="mb-2 block text-sm font-medium text-gray-700">
                 Content Length
               </label>
@@ -174,9 +182,15 @@ function App() {
                 onChange={(e) => setContentLength(e.target.value)}
                 className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none focus:border-black"
               >
-                <option value="Short">Short</option>
-                <option value="Medium">Medium</option>
-                <option value="Long">Long</option>
+                <option className="bg-black text-white" value="Short">
+                  Short
+                </option>
+                <option className="bg-black text-white" value="Medium">
+                  Medium
+                </option>
+                <option className="bg-black text-white" value="Long">
+                  Long
+                </option>
               </select>
             </div>
 
